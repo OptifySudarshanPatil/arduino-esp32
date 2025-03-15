@@ -3,6 +3,7 @@ name: ESP32 Arduino Release
 on:
   release:
     types: published
+  workflow_dispatch:
 
 jobs:
   build:
