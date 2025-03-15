@@ -166,14 +166,14 @@ extern void ARDUINO_ISR_ATTR __digitalWrite(uint8_t pin, uint8_t val) {
     //use RMT to set all channels on/off
     RGB_BUILTIN_storage = val;
     const uint8_t comm_val = val != 0 ? RGB_BRIGHTNESS : 0;
-    neopixelWrite(RGB_BUILTIN, comm_val, comm_val, comm_val);
+    rgbLedWrite(RGB_BUILTIN, comm_val, comm_val, comm_val);
     return;
   }
 #endif  // RGB_BUILTIN
   if (perimanGetPinBus(pin, ESP32_BUS_TYPE_GPIO) != NULL) {
     gpio_set_level((gpio_num_t)pin, val);
   } else {
-    log_e("IO %i is not set as GPIO.", pin);
+    log_e("IO %i is not set as GPIO. Execute digitalMode(%i, OUTPUT) first.", pin, pin);
   }
 }
 
@@ -182,14 +182,12 @@ extern int ARDUINO_ISR_ATTR __digitalRead(uint8_t pin) {
   if (pin == RGB_BUILTIN) {
     return RGB_BUILTIN_storage;
   }
-#endif
-
-  if (perimanGetPinBus(pin, ESP32_BUS_TYPE_GPIO) != NULL) {
-    return gpio_get_level((gpio_num_t)pin);
-  } else {
-    log_e("IO %i is not set as GPIO.", pin);
-    return 0;
+#endif  // RGB_BUILTIN
+  // This work when the pin is set as GPIO and in INPUT mode. For all other pin functions, it may return inconsistent response
+  if (perimanGetPinBus(pin, ESP32_BUS_TYPE_GPIO) == NULL) {
+    log_w("IO %i is not set as GPIO. digitalRead() may return an inconsistent value.");
   }
+  return gpio_get_level((gpio_num_t)pin);
 }
 
 static void ARDUINO_ISR_ATTR __onPinInterrupt(void *arg) {

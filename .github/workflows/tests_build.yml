@@ -5,11 +5,11 @@ on:
     inputs:
       type:
         type: string
-        description: 'Type of tests to build'
+        description: "Type of tests to build"
         required: true
       chip:
         type: string
-        description: 'Chip to build tests for'
+        description: "Chip to build tests for"
         required: true
 
 jobs:
@@ -26,9 +26,10 @@ jobs:
         with:
           key: tests-${{ env.id }}-bin
           path: |
-            ~/.arduino/tests/**/build*.tmp/*.bin
-            ~/.arduino/tests/**/build*.tmp/*.elf
-            ~/.arduino/tests/**/build*.tmp/*.json
+            ~/.arduino/tests/${{ inputs.chip }}/**/build*.tmp/*.bin
+            ~/.arduino/tests/${{ inputs.chip }}/**/build*.tmp/*.elf
+            ~/.arduino/tests/${{ inputs.chip }}/**/build*.tmp/*.json
+            ~/.arduino/tests/${{ inputs.chip }}/**/build*.tmp/sdkconfig
 
       - name: Evaluate if tests should be built
         id: check-build
@@ -72,9 +73,10 @@ jobs:
         with:
           key: tests-${{ env.id }}-bin
           path: |
-            ~/.arduino/tests/**/build*.tmp/*.bin
-            ~/.arduino/tests/**/build*.tmp/*.elf
-            ~/.arduino/tests/**/build*.tmp/*.json
+            ~/.arduino/tests/${{ inputs.chip }}/**/build*.tmp/*.bin
+            ~/.arduino/tests/${{ inputs.chip }}/**/build*.tmp/*.elf
+            ~/.arduino/tests/${{ inputs.chip }}/**/build*.tmp/*.json
+            ~/.arduino/tests/${{ inputs.chip }}/**/build*.tmp/sdkconfig
 
       - name: Upload ${{ inputs.chip }} ${{ inputs.type }} binaries as artifacts
         uses: actions/upload-artifact@v4
@@ -82,6 +84,7 @@ jobs:
           name: tests-bin-${{ inputs.chip }}-${{ inputs.type }}
           overwrite: true
           path: |
-            ~/.arduino/tests/**/build*.tmp/*.bin
-            ~/.arduino/tests/**/build*.tmp/*.elf
-            ~/.arduino/tests/**/build*.tmp/*.json
+            ~/.arduino/tests/${{ inputs.chip }}/**/build*.tmp/*.bin
+            ~/.arduino/tests/${{ inputs.chip }}/**/build*.tmp/*.elf
+            ~/.arduino/tests/${{ inputs.chip }}/**/build*.tmp/*.json
+            ~/.arduino/tests/${{ inputs.chip }}/**/build*.tmp/sdkconfig
